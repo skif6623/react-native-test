@@ -1,5 +1,5 @@
 import {StatusBar} from "expo-status-bar";
-import React, {useState} from "react";
+import React, {useState, useCallback} from "react";
 import {
 	StyleSheet,
 	View,
@@ -8,30 +8,52 @@ import {
 	Keyboard,
 	KeyboardAvoidingView,
 	Platform,
-	Alert,
-	Button,
 	Text,
 	ImageBackground,
 	TouchableOpacity,
 } from "react-native";
+import {useFonts} from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
 
-const initialRegisterData = {
-	login: "",
+SplashScreen.preventAutoHideAsync();
+
+const initialLoginData = {
 	email: "",
 	password: "",
 };
 
 const App = () => {
+	const [state, setState] = useState(initialLoginData);
 	const [isShowKey, setIsShowKey] = useState(false);
-	console.log(isShowKey);
+	const [fontsLoaded] = useFonts({
+		"Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
+		"Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
+	});
+
+	const onLayoutRootView = useCallback(async () => {
+		if (fontsLoaded) {
+			await SplashScreen.hideAsync();
+		}
+	}, [fontsLoaded]);
+
+	if (!fontsLoaded) {
+		return null;
+	}
 
 	const keyHide = () => {
 		setIsShowKey(false);
 		Keyboard.dismiss();
 	};
 
+	const handleSubmit = () => {
+		setIsShowKey(false);
+		Keyboard.dismiss();
+		console.log(state);
+		setState(initialLoginData);
+	};
+
 	return (
-		<TouchableWithoutFeedback onPress={() => keyHide()}>
+		<TouchableWithoutFeedback onPress={keyHide} onLayout={onLayoutRootView}>
 			<View style={styles.container}>
 				<ImageBackground style={styles.image} source={require("./assets/images/main-bg.jpg")}>
 					<KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"}>
@@ -40,7 +62,9 @@ const App = () => {
 								<TextInput
 									style={styles.input}
 									placeholder="Адреса електронної пошти"
+									value={state.email}
 									onFocus={() => setIsShowKey(true)}
+									onChangeText={value => setState(prevState => ({...prevState, email: value}))}
 								/>
 							</View>
 							<View>
@@ -48,10 +72,12 @@ const App = () => {
 									style={styles.input}
 									placeholder="Пароль"
 									secureTextEntry={true}
+									value={state.password}
 									onFocus={() => setIsShowKey(true)}
+									onChangeText={value => setState(prevState => ({...prevState, password: value}))}
 								/>
 							</View>
-							<TouchableOpacity style={styles.button} activeOpacity={0.9} onPress={() => keyHide()}>
+							<TouchableOpacity style={styles.button} activeOpacity={0.9} onPress={handleSubmit}>
 								<Text style={styles.buttonTitle}>Увійти</Text>
 							</TouchableOpacity>
 						</View>
@@ -79,6 +105,7 @@ const styles = StyleSheet.create({
 	input: {
 		height: 50,
 		paddingHorizontal: 15,
+		fontFamily: "Roboto-Regular",
 		backgroundColor: "#F6F6F6",
 		borderWidth: 1,
 		borderColor: "#E8E8E8",
@@ -92,6 +119,7 @@ const styles = StyleSheet.create({
 		borderRadius: 100,
 	},
 	buttonTitle: {
+		fontFamily: "Roboto-Regular",
 		fontStyle: "normal",
 		fontSize: 16,
 		lineHeight: 19,
