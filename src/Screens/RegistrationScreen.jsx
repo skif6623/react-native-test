@@ -1,5 +1,4 @@
-import {StatusBar} from "expo-status-bar";
-import React, {useState} from "react";
+import React, {useState, useCallback} from "react";
 import {
 	StyleSheet,
 	View,
@@ -8,12 +7,14 @@ import {
 	Keyboard,
 	KeyboardAvoidingView,
 	Platform,
-	Alert,
-	Button,
 	Text,
 	ImageBackground,
 	TouchableOpacity,
 } from "react-native";
+import {useFonts} from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync();
 
 const initialRegisterData = {
 	login: "",
@@ -21,56 +22,77 @@ const initialRegisterData = {
 	password: "",
 };
 
-const App = () => {
-	const [data, setData] = useState(initialRegisterData);
-	const [focusState, setFocusState] = useState(false);
+const RegistrationScreen = () => {
+	const [state, setState] = useState(initialRegisterData);
+	const [isShowKey, setIsShowKey] = useState(false);
+	const [fontsLoaded] = useFonts({
+		"Roboto-Regular": require("../../assets/fonts/Roboto-Regular.ttf"),
+		"Roboto-Medium": require("../../assets/fonts/Roboto-Medium.ttf"),
+	});
+	console.log(isShowKey);
+	const onLayoutRootView = useCallback(async () => {
+		if (fontsLoaded) {
+			await SplashScreen.hideAsync();
+		}
+	}, [fontsLoaded]);
 
-	console.log(focusState);
+	if (!fontsLoaded) {
+		return null;
+	}
 
-	const handleSubmit = () => {
-		console.log(data);
-		setData(initialRegisterData);
-	};
-
-	const keyboardHide = () => {
-		setFocusState(false);
+	const keyHide = () => {
+		setIsShowKey(false);
 		Keyboard.dismiss();
 	};
+
+	const handleSubmit = () => {
+		setIsShowKey(false);
+		Keyboard.dismiss();
+		console.log(state);
+		setState(initialLoginData);
+	};
+
 	return (
-		<TouchableWithoutFeedback onPress={keyboardHide}>
+		<TouchableWithoutFeedback onPress={keyHide}>
 			<View style={styles.container}>
-				<ImageBackground style={styles.image} source={require("./assets/images/main-bg.jpg")}>
+				<ImageBackground style={styles.image} source={require("../../assets/images/main-bg.jpg")}>
 					<KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"}>
-						{/* <View style={styles.formBg}> */}
-						<Text style={styles.title}>Реєстрація</Text>
-						<View style={styles.test}>
-							<TextInput
-								style={styles.input}
-								placeholder="Логін"
-								value={data.login}
-								onFocus={() => setFocusState(true)}
-								onChangeText={value => setData(prevData => ({...prevData, login: value}))}
-							/>
-							<TextInput
-								style={styles.input}
-								placeholder="Адрес електронної пошти"
-								value={data.email}
-								onFocus={() => setFocusState(true)}
-								onChangeText={value => setData(prevData => ({...prevData, email: value}))}
-							/>
-							<TextInput
-								style={styles.input}
-								secureTextEntry={true}
-								placeholder="Пароль"
-								value={data.password}
-								onFocus={() => setFocusState(true)}
-								onChangeText={value => setData(prevData => ({...prevData, password: value}))}
-							/>
-							<TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={keyboardHide}>
-								<Text style={styles.buttonText}>Зареєструватися</Text>
-							</TouchableOpacity>
+						<View style={styles.formBg}>
+							<View style={{...styles.form, marginBottom: isShowKey === true ? 150 : 113}}>
+								<Text style={styles.formTitle}>Реєстрація</Text>
+								<View style={{marginBottom: 16}}>
+									<TextInput
+										style={styles.input}
+										placeholder="Логін"
+										value={state.email}
+										onFocus={() => setIsShowKey(true)}
+										onChangeText={value => setState(prevState => ({...prevState, login: value}))}
+									/>
+								</View>
+								<View style={{marginBottom: 16}}>
+									<TextInput
+										style={styles.input}
+										placeholder="Адреса електронної пошти"
+										value={state.email}
+										onFocus={() => setIsShowKey(true)}
+										onChangeText={value => setState(prevState => ({...prevState, email: value}))}
+									/>
+								</View>
+								<View>
+									<TextInput
+										style={styles.input}
+										placeholder="Пароль"
+										secureTextEntry={true}
+										value={state.password}
+										onFocus={() => setIsShowKey(true)}
+										onChangeText={value => setState(prevState => ({...prevState, password: value}))}
+									/>
+								</View>
+								<TouchableOpacity style={styles.button} activeOpacity={0.9} onPress={handleSubmit}>
+									<Text style={styles.buttonTitle}>Увійти</Text>
+								</TouchableOpacity>
+							</View>
 						</View>
-						{/* </View> */}
 					</KeyboardAvoidingView>
 				</ImageBackground>
 			</View>
@@ -85,22 +107,22 @@ const styles = StyleSheet.create({
 	},
 	image: {
 		flex: 1,
-		justifyContent: "flex-end",
 		resizeMode: "cover",
+		justifyContent: "flex-end",
 	},
 	formBg: {
-		height: 549,
-		paddingTop: 92,
-		paddingHorizontal: 16,
+		paddingTop: 32,
 		backgroundColor: "#fff",
 		borderTopRightRadius: 25,
 		borderTopLeftRadius: 25,
 	},
-	title: {
-		marginBottom: 32,
+	form: {
+		marginHorizontal: 16,
+	},
+	formTitle: {
+		marginBottom: 33,
 		textAlign: "center",
-		fontStyle: "normal",
-		fontWeight: "bold",
+		fontFamily: "Roboto-Medium",
 		fontSize: 30,
 		lineHeight: 35,
 		letterSpacing: 0.01,
@@ -108,8 +130,8 @@ const styles = StyleSheet.create({
 	},
 	input: {
 		height: 50,
-		marginBottom: 16,
 		paddingHorizontal: 15,
+		fontFamily: "Roboto-Regular",
 		backgroundColor: "#F6F6F6",
 		borderWidth: 1,
 		borderColor: "#E8E8E8",
@@ -119,21 +141,17 @@ const styles = StyleSheet.create({
 		height: 50,
 		marginTop: 45,
 		justifyContent: "center",
-		alignContent: "center",
 		backgroundColor: "#FF6C00",
-		textAlign: "center",
 		borderRadius: 100,
 	},
-	buttonText: {
+	buttonTitle: {
+		fontFamily: "Roboto-Regular",
 		fontStyle: "normal",
 		fontSize: 16,
 		lineHeight: 19,
 		textAlign: "center",
 		color: "#fff",
 	},
-	test: {
-		marginBottom: 0,
-	},
 });
 
-export default App;
+export default RegistrationScreen;
