@@ -79,10 +79,14 @@ const LoginScreen = ({ navigation }) => {
                 >
                   <Text style={styles.buttonTitle}>Увійти</Text>
                 </TouchableOpacity>
-                <Button
-                  title="Go to register"
+                <TouchableOpacity
+                  style={{ marginTop: 16 }}
                   onPress={() => navigation.navigate('Registration')}
-                />
+                >
+                  <Text style={styles.navLinkTitle} activeOpacity={0.9}>
+                    Немає аккаунта? Зареєструватися
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
           </KeyboardAvoidingView>
@@ -143,6 +147,13 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     textAlign: 'center',
     color: '#fff',
+  },
+  navLinkTitle: {
+    fontFamily: 'Roboto-Regular',
+    fontSize: 16,
+    lineHeight: 19,
+    color: '#1e44c2',
+    textAlign: 'center',
   },
 });
 
