@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from "react";
+import React, {useState} from "react";
 import {
 	StyleSheet,
 	View,
@@ -11,10 +11,6 @@ import {
 	ImageBackground,
 	TouchableOpacity,
 } from "react-native";
-import {useFonts} from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
-
-SplashScreen.preventAutoHideAsync();
 
 const initialLoginData = {
 	email: "",
@@ -24,20 +20,6 @@ const initialLoginData = {
 const LoginScreen = () => {
 	const [state, setState] = useState(initialLoginData);
 	const [isShowKey, setIsShowKey] = useState(false);
-	const [fontsLoaded] = useFonts({
-		"Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
-		"Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
-	});
-
-	const onLayoutRootView = useCallback(async () => {
-		if (fontsLoaded) {
-			await SplashScreen.hideAsync();
-		}
-	}, [fontsLoaded]);
-
-	if (!fontsLoaded) {
-		return null;
-	}
 
 	const keyHide = () => {
 		setIsShowKey(false);
@@ -52,9 +34,9 @@ const LoginScreen = () => {
 	};
 
 	return (
-		<TouchableWithoutFeedback onPress={keyHide} onLayout={onLayoutRootView}>
+		<TouchableWithoutFeedback onPress={keyHide}>
 			<View style={styles.container}>
-				<ImageBackground style={styles.image} source={require("./assets/images/main-bg.jpg")}>
+				<ImageBackground style={styles.image} source={require("../../assets/images/main-bg.jpg")}>
 					<KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"}>
 						<View style={styles.formBg}>
 							<View style={{...styles.form, marginBottom: isShowKey ? -60 : 100}}>
@@ -144,4 +126,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default App;
+export default LoginScreen;
