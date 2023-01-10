@@ -1,9 +1,11 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+import { Feather } from '@expo/vector-icons';
+
 import RegistrationScreen from './screens/auth/RegistrationScreen';
 import ProfileScreen from './screens/mainScreen/ProfileScreen';
-import CreateScreen from './screens/mainScreen/CreateScreen';
+import CreateScreen from './screens/mainScreen/CreatePostsScreen';
 import PostsScreen from './screens/mainScreen/PostsScreen';
 import LoginScreen from './screens/auth/LoginScreen';
 
@@ -28,24 +30,41 @@ const useRoute = isAuth => {
     );
   }
   return (
-    <MainTab.Navigator>
-      <MainTab.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{ headerShown: false }}
-      />
+    <MainTab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        atabBarActiveTintColor: 'red',
+        tabBarShowLabel: false,
+      })}
+    >
       <MainTab.Screen
         name="Posts"
         component={PostsScreen}
-        options={{ headerShown: false }}
+        options={{
+          tabBarIcon: (focused, size, color) => (
+            <Feather name="grid" size={24} color={color} />
+          ),
+        }}
       />
       <MainTab.Screen
         name="Create"
         component={CreateScreen}
-        options={{ headerShown: false }}
+        options={{
+          tabBarIcon: (focused, size, color) => (
+            <Feather name="plus" size={24} color={color} />
+          ),
+        }}
+      />
+      <MainTab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: (focused, size, color) => (
+            <Feather name="user" size={24} color={color} />
+          ),
+        }}
       />
     </MainTab.Navigator>
   );
 };
-
 export default useRoute;
