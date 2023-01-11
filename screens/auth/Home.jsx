@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 import ProfileScreen from '../mainScreen/ProfileScreen';
 import CreateScreen from '../mainScreen/CreatePostsScreen';
@@ -18,17 +18,32 @@ const Home = ({ navigation, route }) => {
           let iconName;
 
           if (route.name === 'Posts') {
-            iconName = focused && 'grid';
+            iconName = focused ? 'grid' : 'grid-outline';
           } else if (route.name === 'Create') {
             iconName = focused && 'plus';
           } else if (route.name === 'Profile') {
             iconName = focused && 'user';
           }
-          return <Feather name={iconName} size={size} color={color} />;
+          return <Feather name={iconName} size={24} color={color} />;
+        },
+        tabBarShowLabel: false,
+        tabBarActiveBackgroundColor: '#FF6C00',
+        tabBarItemStyle: {
+          borderRadius: 50,
         },
       })}
     >
-      <Tab.Screen name="Posts" component={PostsScreen} />
+      <Tab.Screen
+        options={{
+          headerRight: () => (
+            <TouchableOpacity>
+              <Feather name="log-out" size={24} color="black" />
+            </TouchableOpacity>
+          ),
+        }}
+        name="Posts"
+        component={PostsScreen}
+      />
       <Tab.Screen name="Create" component={CreateScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
