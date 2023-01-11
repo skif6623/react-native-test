@@ -10,7 +10,6 @@ import {
   Text,
   ImageBackground,
   TouchableOpacity,
-  Button,
 } from 'react-native';
 
 const initialLoginData = {
@@ -32,6 +31,10 @@ const LoginScreen = ({ navigation }) => {
     Keyboard.dismiss();
     console.log(state);
     setState(initialLoginData);
+    navigation.navigate('Home', {
+      email: state.email,
+      password: state.password,
+    });
   };
 
   return (

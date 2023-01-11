@@ -10,9 +10,9 @@ import PostsScreen from './screens/mainScreen/PostsScreen';
 import LoginScreen from './screens/auth/LoginScreen';
 
 const AuthStack = createStackNavigator();
-const MainTab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator();
 
-const useRoute = isAuth => {
+const Router = isAuth => {
   if (!isAuth) {
     return (
       <AuthStack.Navigator>
@@ -67,4 +67,4 @@ const useRoute = isAuth => {
     </MainTab.Navigator>
   );
 };
-export default useRoute;
+export default Router;
